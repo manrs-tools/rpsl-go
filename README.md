@@ -44,3 +44,6 @@ func main() {
     }
 }
 ```
+
+## License
+The source code of this project is licensed under the MIT License. For more information, see [LICENSE](./LICENSE).
