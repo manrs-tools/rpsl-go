@@ -11,7 +11,7 @@ func ParseAttribute(i *int, lines []string) (*Attribute, *error) {
 	attribute := Attribute{}
 	line := lines[*i]
 	data := strings.SplitN(line, ":", 2)
-	attribute.Name = data[0]
+	attribute.Name = strings.ToLower(data[0])
 
 	if len(data) < 2 {
 		return &attribute, nil
