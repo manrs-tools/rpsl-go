@@ -91,7 +91,8 @@ func parseObjects(raw string) ([]Object, error) {
 		object := Object{}
 		hasAttributes := false
 		for _, line := range lines {
-			if strings.HasPrefix(lines[0], "%") {
+			line = strings.TrimSpace(line)
+			if line == "" || strings.HasPrefix(lines[0], "%") || strings.Contains(line, "\u0000") {
 				continue
 			}
 
