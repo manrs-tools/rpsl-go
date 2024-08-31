@@ -1,6 +1,6 @@
 # RPSL-Go
 
-RPSL-Go is a Go library for parsing and handling Routing Policy Specification Language (RPSL) attributes and objects.
+RPSL-Go is a Go library for parsing and handling [RFC 2622: Routing Policy Specification Language (RPSL)](https://datatracker.ietf.org/doc/rfc2622/) attributes and objects.
 
 ## Installation
 
