@@ -21,7 +21,7 @@ import (
     "fmt"
     "log"
 
-    rpslgo "github.com/frederic-arr/rpsl-go"
+    "github.com/frederic-arr/rpsl-go"
 )
 
 func main() {
@@ -34,7 +34,7 @@ func main() {
         "source:        RIPE",
     }
     i := 0
-    obj, err := rpslgo.ParseObject(&i, lines)
+    obj, err := rpsl.ParseObject(&i, lines)
     if err != nil {
         log.Fatalf("parseObject => %v", err)
     }

@@ -1,9 +1,9 @@
-package rpslgo_test
+package rpsl_test
 
 import (
 	"testing"
 
-	rpslgo "github.com/frederic-arr/rpsl-go"
+	"github.com/frederic-arr/rpsl-go"
 )
 
 func TestObject(t *testing.T) {
@@ -13,7 +13,7 @@ func TestObject(t *testing.T) {
 	}
 
 	i := 0
-	obj, err := rpslgo.ParseObject(&i, lines)
+	obj, err := rpsl.ParseObject(&i, lines)
 	if err != nil {
 		t.Fatalf(`parseObject => %v`, err)
 	}
@@ -55,7 +55,7 @@ func TestObjectComments(t *testing.T) {
 	}
 
 	i := 0
-	obj, err := rpslgo.ParseObject(&i, lines)
+	obj, err := rpsl.ParseObject(&i, lines)
 	if err != nil {
 		t.Fatalf(`parseObject => %v`, err)
 	}

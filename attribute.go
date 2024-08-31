@@ -1,4 +1,4 @@
-package rpslgo
+package rpsl
 
 import "strings"
 
