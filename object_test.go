@@ -88,3 +88,83 @@ func TestObjectComments(t *testing.T) {
 		t.Fatalf(`parseObject.Attributes[1].Value[0] => %v, want %v`, obj.Attributes[1].Value[0], " CERN")
 	}
 }
+
+func TestObjectLen(t *testing.T) {
+	lines := []string{
+		"organisation:      ORG-CEOf1-RIPE",
+		"remarks:           This is a comment",
+		"description:       CERN",
+		"remarks:           This is another comment",
+	}
+
+	i := 0
+	obj, err := rpsl.ParseObject(&i, lines)
+	if err != nil {
+		t.Fatalf(`parseObject => %v`, err)
+	}
+
+	l := obj.Len()
+	if l != 4 {
+		t.Fatalf(`object.Len() => %v, want %v`, l, 4)
+	}
+}
+
+func TestObjectKeys(t *testing.T) {
+	lines := []string{
+		"organisation:      ORG-CEOf1-RIPE",
+		"remarks:           This is a comment",
+		"description:       CERN",
+		"remarks:           This is another comment",
+	}
+
+	i := 0
+	obj, err := rpsl.ParseObject(&i, lines)
+	if err != nil {
+		t.Fatalf(`parseObject => %v`, err)
+	}
+
+	keys := obj.Keys()
+	if len(keys) != 3 {
+		t.Fatalf(`object.Keys() => length of %v, want %v`, len(keys), 3)
+	}
+
+	if keys[0] != "organisation" {
+		t.Fatalf(`object.Keys()[0] => %v, want %v`, keys[0], "organisation")
+	}
+
+	if keys[1] != "remarks" {
+		t.Fatalf(`object.Keys()[1] => %v, want %v`, keys[1], "remarks")
+	}
+
+	if keys[2] != "description" {
+		t.Fatalf(`object.Keys()[2] => %v, want %v`, keys[2], "description")
+	}
+}
+
+func TestObjectGet(t *testing.T) {
+	lines := []string{
+		"organisation:      ORG-CEOf1-RIPE",
+		"remarks:           This is a comment",
+		"description:       CERN",
+		"remarks:           This is another comment",
+	}
+
+	i := 0
+	obj, err := rpsl.ParseObject(&i, lines)
+	if err != nil {
+		t.Fatalf(`parseObject => %v`, err)
+	}
+
+	keys := obj.Get("remarks")
+	if len(keys) != 2 {
+		t.Fatalf(`object.Get("remarks") => length of %v, want %v`, len(keys), 2)
+	}
+
+	if keys[0] != "This is a comment" {
+		t.Fatalf(`object.Get("remarks")[0] => %v, want %v`, keys[0], "This is a comment")
+	}
+
+	if keys[1] != "This is another comment" {
+		t.Fatalf(`object.Get("remarks")[1] => %v, want %v`, keys[1], "This is another comment")
+	}
+}
