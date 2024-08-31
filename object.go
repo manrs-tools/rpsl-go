@@ -28,15 +28,40 @@ func (o *Object) Len() int {
 	return len(o.Attributes)
 }
 
+// Returns the first value for a given key in the Object.
+// If the key is not present in the Object, an empty string will be returned.
+// If a key appears multiple times in the Object, only the first value will be returned.
+func (o *Object) GetFirst(key string) string {
+	key = strings.ToLower(key)
+	value := ""
+	for _, attr := range o.Attributes {
+		if attr.Name == key {
+			for _, v := range attr.Value {
+				value += v + "\n"
+			}
+			break
+		}
+	}
+
+	value = strings.TrimSuffix(value, "\n")
+	return value
+}
+
 // Returns a slice of values for a given key in the Object.
 // If the key is not present in the Object, an empty slice will be returned.
 // If a key appears multiple times in the Object, all values will be included in the returned slice.
-func (o *Object) Get(key string) []string {
+func (o *Object) GetAll(key string) []string {
 	key = strings.ToLower(key)
 	var values []string
 	for _, attr := range o.Attributes {
 		if attr.Name == key {
-			values = append(values, attr.Value...)
+			value := ""
+			for _, v := range attr.Value {
+				value += v + "\n"
+			}
+
+			value = strings.TrimSuffix(value, "\n")
+			values = append(values, value)
 		}
 	}
 

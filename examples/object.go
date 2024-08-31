@@ -13,7 +13,8 @@ func main() {
 		"			Iceland\n" +
 		"phone:		+1 555 123456\n" +
 		"nic-hdl:	JD1234-RIPE\n" +
-		"mnt-by:	EXAMPLE-MNT\n" +
+		"mnt-by:	FOO-MNT\n" +
+		"mnt-by:	BAR-MNT\n" +
 		"source:	RIPE"
 
 	obj, err := rpsl.Parse(raw)
@@ -21,7 +22,13 @@ func main() {
 		log.Fatalf("parseObject => %v", err)
 	}
 
-	for _, attr := range obj.Attributes {
-		fmt.Printf("Attribute Name: %s, Attribute Value: %v\n", attr.Name, attr.Value)
+	address := obj.GetFirst("address")
+	fmt.Printf("Address:\n")
+	fmt.Printf("%s\n\n", address)
+
+	maintainers := obj.GetAll("mnt-by")
+	fmt.Printf("Maintainers:\n")
+	for _, m := range maintainers {
+		fmt.Printf("%s\n", m)
 	}
 }

@@ -153,7 +153,7 @@ func TestObjectGet(t *testing.T) {
 		t.Fatalf(`parseObject => %v`, err)
 	}
 
-	keys := obj.Get("remarks")
+	keys := obj.GetAll("remarks")
 	if len(keys) != 2 {
 		t.Fatalf(`object.Get("remarks") => length of %v, want %v`, len(keys), 2)
 	}
