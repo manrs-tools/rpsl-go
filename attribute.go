@@ -1,75 +1,53 @@
 package rpsl
 
-import "strings"
+import (
+	"errors"
+	"regexp"
+	"strings"
+)
 
 type Attribute struct {
-	Name  string
-	Value []string
+	Name    string
+	Value   string
+	Comment *string
 }
 
-func parseAttributeLines(i *int, lines []string) (*Attribute, *error) {
-	attribute := Attribute{}
-	line := lines[*i]
-	data := strings.SplitN(line, ":", 2)
-	attribute.Name = strings.ToLower(data[0])
+var attr_re = regexp.MustCompile(`^(?P<Name>[a-z0-9-]+): *(?P<Value>[^#]*?) *(?:# *(?P<Comment>.*?) *)?$`)
 
-	if len(data) < 2 {
-		return &attribute, nil
+func parseAttribute(line string) (*Attribute, error) {
+	matches := attr_re.FindStringSubmatch(line)
+	if matches == nil {
+		return nil, errors.New("invalid attribute: " + line)
 	}
 
-	value := strings.SplitN(data[1], "#", 2)[0]
-	value = strings.TrimSpace(value)
-	if value == "" {
-		return &attribute, nil
+	var name string
+	var value string
+	var comment *string
+
+	name = strings.TrimSpace(matches[attr_re.SubexpIndex("Name")])
+	value = strings.TrimSpace(matches[attr_re.SubexpIndex("Value")])
+	if strings.Contains(line, "#") {
+		c := strings.TrimSpace(matches[attr_re.SubexpIndex("Comment")])
+		comment = &c
 	}
 
-	attribute.Value = append(attribute.Value, value)
-	for *i = *i + 1; *i < len(lines); *i++ {
-		line := lines[*i]
-		if len(line) == 0 {
-			break
-		}
-
-		c := line[0]
-		if c != ' ' && c != '\t' && c != '+' && c != '#' && c != '%' {
-			break
-		}
-
-		if c == '#' || c == '%' {
-			continue
-		}
-
-		value := strings.SplitN(line[1:], "#", 2)[0]
-		value = strings.TrimSpace(value)
-		if value == "" && c != '+' {
-			break
-		}
-
-		if value != "" && (value[0] == '#' || value[0] == '%') {
-			continue
-		}
-
-		attribute.Value = append(attribute.Value, value)
+	attr := &Attribute{
+		Name:    name,
+		Value:   value,
+		Comment: comment,
 	}
 
-	return &attribute, nil
+	return attr, nil
 }
 
 func (a *Attribute) String() string {
 	var str strings.Builder
 	str.WriteString(a.Name)
 	str.WriteString(":")
-	for i, value := range a.Value {
-		if i > 0 {
-			str.WriteString("+")
-		} else {
-			str.WriteString(" ")
-		}
-
-		str.WriteString(value)
-		if i < len(a.Value)-1 {
-			str.WriteString("\n")
-		}
+	str.WriteString(a.Value)
+	if a.Comment != nil {
+		str.WriteString(" # ")
+		str.WriteString(*a.Comment)
 	}
 
 	return str.String()

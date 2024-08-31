@@ -5,10 +5,8 @@ import (
 )
 
 func TestSingleLineNoValue(t *testing.T) {
-	lines := []string{"dry-run:"}
-
-	i := 0
-	attr, err := parseAttributeLines(&i, lines)
+	raw := "dry-run:"
+	attr, err := parseAttribute(raw)
 	if err != nil {
 		t.Fatalf(`parseAttribute => %v`, err)
 	}
@@ -17,16 +15,14 @@ func TestSingleLineNoValue(t *testing.T) {
 		t.Fatalf(`parseAttribute.Name => %v, want %v`, attr.Name, "dry-run")
 	}
 
-	if len(attr.Value) != 0 {
-		t.Fatalf(`parseAttribute.Value => length of %v, want %v`, len(attr.Value), 0)
+	if attr.Value != "" {
+		t.Fatalf(`parseAttribute.Value => %v, want %v`, attr.Value, "")
 	}
 }
 
 func TestSingleLine(t *testing.T) {
-	lines := []string{"description:       CERN"}
-
-	i := 0
-	attr, err := parseAttributeLines(&i, lines)
+	raw := "description:       CERN"
+	attr, err := parseAttribute(raw)
 	if err != nil {
 		t.Fatalf(`parseAttribute => %v`, err)
 	}
@@ -35,20 +31,18 @@ func TestSingleLine(t *testing.T) {
 		t.Fatalf(`parseAttribute.Name => %v, want %v`, attr.Name, "description")
 	}
 
-	if len(attr.Value) != 1 {
-		t.Fatalf(`parseAttribute.Value => length of %v, want %v`, len(attr.Value), 1)
+	if attr.Value != "CERN" {
+		t.Fatalf(`parseAttribute.Value => %v, want %v`, attr.Value, "CERN")
 	}
 
-	if attr.Value[0] != "CERN" {
-		t.Fatalf(`parseAttribute.Value[0] => %v, want %v`, attr.Value[0], "CERN")
+	if attr.Comment != nil {
+		t.Fatalf(`parseAttribute.Comment => %v, want %v`, attr.Comment, nil)
 	}
 }
 
 func TestSingleLineComment(t *testing.T) {
-	lines := []string{"description:       CERN # This is a test"}
-
-	i := 0
-	attr, err := parseAttributeLines(&i, lines)
+	raw := "description:       CERN # This is a test"
+	attr, err := parseAttribute(raw)
 	if err != nil {
 		t.Fatalf(`parseAttribute => %v`, err)
 	}
@@ -57,159 +51,15 @@ func TestSingleLineComment(t *testing.T) {
 		t.Fatalf(`parseAttribute.Name => %v, want %v`, attr.Name, "description")
 	}
 
-	if len(attr.Value) != 1 {
-		t.Fatalf(`parseAttribute.Value => length of %v, want %v`, len(attr.Value), 1)
+	if attr.Value != "CERN" {
+		t.Fatalf(`parseAttribute.Value => %v, want %v`, attr.Value, "CERN")
 	}
 
-	if attr.Value[0] != "CERN" {
-		t.Fatalf(`parseAttribute.Value[0] => %v, want %v`, attr.Value[0], "CERN")
-	}
-}
-
-func TestMultiLines(t *testing.T) {
-	lines := []string{
-		"description:       CERN",
-		"                   European Organization for Nuclear Research",
+	if attr.Comment == nil {
+		t.Fatalf(`parseAttribute.Comment => %v, want %v`, attr.Comment, "This is a test")
 	}
 
-	i := 0
-	attr, err := parseAttributeLines(&i, lines)
-	if err != nil {
-		t.Fatalf(`parseAttribute => %v`, err)
-	}
-
-	if attr.Name != "description" {
-		t.Fatalf(`parseAttribute.Name => %v, want %v`, attr.Name, "description")
-	}
-
-	if len(attr.Value) != 2 {
-		t.Fatalf(`parseAttribute.Value => length of %v, want %v`, len(attr.Value), 2)
-	}
-
-	if attr.Value[0] != "CERN" {
-		t.Fatalf(`parseAttribute.Value[0] => %v, want %v`, attr.Value[0], "CERN")
-	}
-
-	if attr.Value[1] != "European Organization for Nuclear Research" {
-		t.Fatalf(`parseAttribute.Value[1] => %v, want %v`, attr.Value[1], "European Organization for Nuclear Research")
-	}
-}
-
-func TestMultiLinesComment(t *testing.T) {
-	lines := []string{
-		"description:       CERN",
-		"                   European Organization for Nuclear Research # This is a test",
-	}
-
-	i := 0
-	attr, err := parseAttributeLines(&i, lines)
-	if err != nil {
-		t.Fatalf(`parseAttribute => %v`, err)
-	}
-
-	if attr.Name != "description" {
-		t.Fatalf(`parseAttribute.Name => %v, want %v`, attr.Name, "description")
-	}
-
-	if len(attr.Value) != 2 {
-		t.Fatalf(`parseAttribute.Value => length of %v, want %v`, len(attr.Value), 2)
-	}
-
-	if attr.Value[0] != "CERN" {
-		t.Fatalf(`parseAttribute.Value[0] => %v, want %v`, attr.Value[0], "CERN")
-	}
-
-	if attr.Value[1] != "European Organization for Nuclear Research" {
-		t.Fatalf(`parseAttribute.Value[1] => %v, want %v`, attr.Value[1], "European Organization for Nuclear Research")
-	}
-}
-
-func TestBlankLines(t *testing.T) {
-	lines := []string{
-		"description:       CERN",
-		"+",
-		"                   European Organization for Nuclear Research",
-	}
-
-	i := 0
-	attr, err := parseAttributeLines(&i, lines)
-	if err != nil {
-		t.Fatalf(`parseAttribute => %v`, err)
-	}
-
-	if attr.Name != "description" {
-		t.Fatalf(`parseAttribute.Name => %v, want %v`, attr.Name, "description")
-	}
-
-	if len(attr.Value) != 3 {
-		t.Fatalf(`parseAttribute.Value => length of %v, want %v`, len(attr.Value), 3)
-	}
-
-	if attr.Value[0] != "CERN" {
-		t.Fatalf(`parseAttribute.Value[0] => %v, want %v`, attr.Value[0], "CERN")
-	}
-
-	if attr.Value[1] != "" {
-		t.Fatalf(`parseAttribute.Value[1] => %v, want %v`, attr.Value[1], "")
-	}
-
-	if attr.Value[2] != "European Organization for Nuclear Research" {
-		t.Fatalf(`parseAttribute.Value[2] => %v, want %v`, attr.Value[2], "European Organization for Nuclear Research")
-	}
-}
-
-func TestCommentLine(t *testing.T) {
-	lines := []string{
-		"description:       CERN",
-		"# This is a test",
-		"                   European Organization for Nuclear Research",
-	}
-
-	i := 0
-	attr, err := parseAttributeLines(&i, lines)
-	if err != nil {
-		t.Fatalf(`parseAttribute => %v`, err)
-	}
-
-	if attr.Name != "description" {
-		t.Fatalf(`parseAttribute.Name => %v, want %v`, attr.Name, "description")
-	}
-
-	if len(attr.Value) != 2 {
-		t.Fatalf(`parseAttribute.Value => length of %v, want %v`, len(attr.Value), 2)
-	}
-
-	if attr.Value[0] != "CERN" {
-		t.Fatalf(`parseAttribute.Value[0] => %v, want %v`, attr.Value[0], "CERN")
-	}
-
-	if attr.Value[1] != "European Organization for Nuclear Research" {
-		t.Fatalf(`parseAttribute.Value[1] => %v, want %v`, attr.Value[1], "European Organization for Nuclear Research")
-	}
-}
-
-func TestBlankLineEnd(t *testing.T) {
-	lines := []string{
-		"description:       CERN",
-		"                   ",
-		"                   European Organization for Nuclear Research",
-	}
-
-	i := 0
-	attr, err := parseAttributeLines(&i, lines)
-	if err != nil {
-		t.Fatalf(`parseAttribute => %v`, err)
-	}
-
-	if attr.Name != "description" {
-		t.Fatalf(`parseAttribute.Name => %v, want %v`, attr.Name, "description")
-	}
-
-	if len(attr.Value) != 1 {
-		t.Fatalf(`parseAttribute.Value => length of %v, want %v`, len(attr.Value), 1)
-	}
-
-	if attr.Value[0] != "CERN" {
-		t.Fatalf(`parseAttribute.Value[0] => %v, want %v`, attr.Value[0], "CERN")
+	if *attr.Comment != "This is a test" {
+		t.Fatalf(`parseAttribute.Comment => %v, want %v`, attr.Comment, "This is a test")
 	}
 }

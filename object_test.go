@@ -5,122 +5,61 @@ import (
 )
 
 func TestObject(t *testing.T) {
-	lines := []string{
-		"organisation:      ORG-CEOf1-RIPE",
-		"description:       CERN",
-	}
+	raw := "organisation:      ORG-CEOf1-RIPE\n" +
+		"description:       CERN"
 
-	i := 0
-	obj, err := parseObjectLines(&i, lines)
+	objects, err := parseObjects(raw)
 	if err != nil {
 		t.Fatalf(`parseObject => %v`, err)
 	}
 
+	if len(objects) != 1 {
+		t.Fatalf(`parseObject => length of %v, want %v`, len(objects), 1)
+	}
+
+	obj := objects[0]
 	if len(obj.Attributes) != 2 {
-		t.Fatalf(`parseObject.Attributes => length of %v, want %v`, len(obj.Attributes), 2)
-	}
-
-	if obj.Attributes[0].Name != "organisation" {
-		t.Fatalf(`parseObject.Attributes[0].Name => %v, want %v`, obj.Attributes[0].Name, "organisation")
-	}
-
-	if len(obj.Attributes[0].Value) != 1 {
-		t.Fatalf(`parseObject.Attributes[0].Attributes => length of %v, want %v`, len(obj.Attributes[0].Value), 1)
-	}
-
-	if obj.Attributes[0].Value[0] != "ORG-CEOf1-RIPE" {
-		t.Fatalf(`parseObject.Attributes[0].Value[0] => %v, want %v`, obj.Attributes[0].Value[0], " ORG-CEOf1-RIPE")
-	}
-
-	if obj.Attributes[1].Name != "description" {
-		t.Fatalf(`parseObject.Attributes[1].Name => %v, want %v`, obj.Attributes[1].Name, "description")
-	}
-
-	if len(obj.Attributes[1].Value) != 1 {
-		t.Fatalf(`parseObject.Attributes[1].Attributes => length of %v, want %v`, len(obj.Attributes[1].Value), 1)
-	}
-
-	if obj.Attributes[1].Value[0] != "CERN" {
-		t.Fatalf(`parseObject.Attributes[1].Value[0] => %v, want %v`, obj.Attributes[1].Value[0], " CERN")
-	}
-}
-
-func TestObjectComments(t *testing.T) {
-	lines := []string{
-		"organisation:      ORG-CEOf1-RIPE",
-		"# This is a comment",
-		"description:       CERN",
-	}
-
-	i := 0
-	obj, err := parseObjectLines(&i, lines)
-	if err != nil {
-		t.Fatalf(`parseObject => %v`, err)
-	}
-
-	if len(obj.Attributes) != 2 {
-		t.Fatalf(`parseObject.Attributes => length of %v, want %v`, len(obj.Attributes), 2)
-	}
-
-	if obj.Attributes[0].Name != "organisation" {
-		t.Fatalf(`parseObject.Attributes[0].Name => %v, want %v`, obj.Attributes[0].Name, "organisation")
-	}
-
-	if len(obj.Attributes[0].Value) != 1 {
-		t.Fatalf(`parseObject.Attributes[0].Attributes => length of %v, want %v`, len(obj.Attributes[0].Value), 1)
-	}
-
-	if obj.Attributes[0].Value[0] != "ORG-CEOf1-RIPE" {
-		t.Fatalf(`parseObject.Attributes[0].Value[0] => %v, want %v`, obj.Attributes[0].Value[0], " ORG-CEOf1-RIPE")
-	}
-
-	if obj.Attributes[1].Name != "description" {
-		t.Fatalf(`parseObject.Attributes[1].Name => %v, want %v`, obj.Attributes[1].Name, "description")
-	}
-
-	if len(obj.Attributes[1].Value) != 1 {
-		t.Fatalf(`parseObject.Attributes[1].Attributes => length of %v, want %v`, len(obj.Attributes[1].Value), 1)
-	}
-
-	if obj.Attributes[1].Value[0] != "CERN" {
-		t.Fatalf(`parseObject.Attributes[1].Value[0] => %v, want %v`, obj.Attributes[1].Value[0], " CERN")
+		t.Fatalf(`object.Attributes => length of %v, want %v`, len(obj.Attributes), 2)
 	}
 }
 
 func TestObjectLen(t *testing.T) {
-	lines := []string{
-		"organisation:      ORG-CEOf1-RIPE",
-		"remarks:           This is a comment",
-		"description:       CERN",
-		"remarks:           This is another comment",
-	}
+	raw := "organisation:      ORG-CEOf1-RIPE\n" +
+		"remarks:           This is a comment\n" +
+		"description:       CERN\n" +
+		"remarks:           This is another comment"
 
-	i := 0
-	obj, err := parseObjectLines(&i, lines)
+	objects, err := parseObjects(raw)
 	if err != nil {
 		t.Fatalf(`parseObject => %v`, err)
 	}
 
-	l := obj.Len()
-	if l != 4 {
-		t.Fatalf(`object.Len() => %v, want %v`, l, 4)
+	if len(objects) != 1 {
+		t.Fatalf(`parseObject => length of %v, want %v`, len(objects), 1)
+	}
+
+	obj := objects[0]
+	if obj.Len() != 4 {
+		t.Fatalf(`object.Len() => %v, want %v`, obj.Len(), 4)
 	}
 }
 
 func TestObjectKeys(t *testing.T) {
-	lines := []string{
-		"organisation:      ORG-CEOf1-RIPE",
-		"remarks:           This is a comment",
-		"description:       CERN",
-		"remarks:           This is another comment",
-	}
+	raw := "organisation:      ORG-CEOf1-RIPE\n" +
+		"remarks:           This is a comment\n" +
+		"description:       CERN\n" +
+		"remarks:           This is another comment"
 
-	i := 0
-	obj, err := parseObjectLines(&i, lines)
+	objects, err := parseObjects(raw)
 	if err != nil {
 		t.Fatalf(`parseObject => %v`, err)
 	}
 
+	if len(objects) != 1 {
+		t.Fatalf(`parseObject => length of %v, want %v`, len(objects), 1)
+	}
+
+	obj := objects[0]
 	keys := obj.Keys()
 	if len(keys) != 3 {
 		t.Fatalf(`object.Keys() => length of %v, want %v`, len(keys), 3)
@@ -139,30 +78,50 @@ func TestObjectKeys(t *testing.T) {
 	}
 }
 
-func TestObjectGet(t *testing.T) {
-	lines := []string{
-		"organisation:      ORG-CEOf1-RIPE",
-		"remarks:           This is a comment",
-		"description:       CERN",
-		"remarks:           This is another comment",
-	}
+func TestObjectGetAll(t *testing.T) {
+	raw := "organisation:      ORG-CEOf1-RIPE\n" +
+		"remarks:           This is a comment\n" +
+		"description:       CERN\n" +
+		"remarks:           This is another comment"
 
-	i := 0
-	obj, err := parseObjectLines(&i, lines)
+	objects, err := parseObjects(raw)
 	if err != nil {
 		t.Fatalf(`parseObject => %v`, err)
 	}
 
-	keys := obj.GetAll("remarks")
-	if len(keys) != 2 {
-		t.Fatalf(`object.Get("remarks") => length of %v, want %v`, len(keys), 2)
+	if len(objects) != 1 {
+		t.Fatalf(`parseObject => length of %v, want %v`, len(objects), 1)
 	}
 
-	if keys[0] != "This is a comment" {
-		t.Fatalf(`object.Get("remarks")[0] => %v, want %v`, keys[0], "This is a comment")
+	obj := objects[0]
+	attrs := obj.GetAll("organisation")
+	if len(attrs) != 1 {
+		t.Fatalf(`object.GetAll("organisation") => length of %v, want %v`, len(attrs), 1)
 	}
 
-	if keys[1] != "This is another comment" {
-		t.Fatalf(`object.Get("remarks")[1] => %v, want %v`, keys[1], "This is another comment")
+	if attrs[0].Value != "ORG-CEOf1-RIPE" {
+		t.Fatalf(`object.GetAll("organisation").Value => %v, want %v`, attrs[0].Value, "ORG-CEOf1-RIPE")
+	}
+
+	attrs = obj.GetAll("description")
+	if len(attrs) != 1 {
+		t.Fatalf(`object.GetAll("description") => length of %v, want %v`, len(attrs), 1)
+	}
+
+	if attrs[0].Value != "CERN" {
+		t.Fatalf(`object.GetAll("description").Value => %v, want %v`, attrs[0].Value, "CERN")
+	}
+
+	attrs = obj.GetAll("remarks")
+	if len(attrs) != 2 {
+		t.Fatalf(`object.GetAll("remarks") => length of %v, want %v`, len(attrs), 2)
+	}
+
+	if attrs[0].Value != "This is a comment" {
+		t.Fatalf(`object.GetAll("remarks")[0].Value => %v, want %v`, attrs[0].Value, "This is a comment")
+	}
+
+	if attrs[1].Value != "This is another comment" {
+		t.Fatalf(`object.GetAll("remarks")[1].Value => %v, want %v`, attrs[1].Value, "This is another comment")
 	}
 }

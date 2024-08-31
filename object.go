@@ -31,43 +31,32 @@ func (o *Object) Len() int {
 // Returns the first value for a given key in the Object.
 // If the key is not present in the Object, an empty string will be returned.
 // If a key appears multiple times in the Object, only the first value will be returned.
-func (o *Object) GetFirst(key string) string {
+func (o *Object) GetFirst(key string) *Attribute {
 	key = strings.ToLower(key)
-	value := ""
 	for _, attr := range o.Attributes {
 		if attr.Name == key {
-			for _, v := range attr.Value {
-				value += v + "\n"
-			}
-			break
+			return &attr
 		}
 	}
 
-	value = strings.TrimSuffix(value, "\n")
-	return value
+	return nil
 }
 
 // Returns a slice of values for a given key in the Object.
 // If the key is not present in the Object, an empty slice will be returned.
 // If a key appears multiple times in the Object, all values will be included in the returned slice.
-func (o *Object) GetAll(key string) []string {
-	key = strings.ToLower(key)
-	var values []string
+func (o *Object) GetAll(key string) []Attribute {
+	var attributes []Attribute
 	for _, attr := range o.Attributes {
 		if attr.Name == key {
-			value := ""
-			for _, v := range attr.Value {
-				value += v + "\n"
-			}
-
-			value = strings.TrimSuffix(value, "\n")
-			values = append(values, value)
+			attributes = append(attributes, attr)
 		}
 	}
 
-	return values
+	return attributes
 }
 
+// Returns true if the Object contains a given key.
 func (o *Object) Exists(key string) bool {
 	key = strings.ToLower(key)
 	for _, attr := range o.Attributes {
@@ -79,6 +68,7 @@ func (o *Object) Exists(key string) bool {
 	return false
 }
 
+// Returns a string representation of the Object.
 func (o *Object) String() string {
 	var str strings.Builder
 	for _, attr := range o.Attributes {
@@ -89,26 +79,37 @@ func (o *Object) String() string {
 	return str.String()
 }
 
-func parseObjectLines(i *int, lines []string) (*Object, *error) {
-	object := Object{}
-
-	for {
-		if *i >= len(lines) {
-			break
+func parseObjects(raw string) ([]Object, error) {
+	objects := []Object{}
+	for _, part := range strings.Split(raw, "\n\n") {
+		part = strings.TrimSpace(part)
+		if part == "" {
+			continue
 		}
 
-		line := lines[*i]
-		if len(line) == 0 || strings.TrimSpace(line) == "" {
-			break
+		lines := strings.Split(part, "\n")
+		object := Object{}
+		hasAttributes := false
+		for _, line := range lines {
+			if strings.HasPrefix(lines[0], "%") {
+				continue
+			}
+
+			attr, err := parseAttribute(line)
+			if err != nil {
+				return nil, err
+			}
+
+			hasAttributes = true
+			object.Attributes = append(object.Attributes, *attr)
 		}
 
-		attr, err := parseAttributeLines(i, lines)
-		if err != nil {
-			return nil, err
+		if !hasAttributes {
+			continue
 		}
 
-		object.Attributes = append(object.Attributes, *attr)
+		objects = append(objects, object)
 	}
 
-	return &object, nil
+	return objects, nil
 }

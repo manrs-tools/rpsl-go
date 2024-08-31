@@ -1,20 +1,9 @@
 package rpsl
 
-import (
-	"strings"
-)
-
 // Parses a string containing a single RPSL object
 // and returns a representation of the parsed data.
-//
-// Parameters:
-//
-//	raw - A string containing the RPSL object to be parsed.
-//
-// Returns:
-//
-//	*Object - A pointer to the Object representation of the parsed RPSL data.
-//	*error  - A pointer to an error if the parsing fails, otherwise nil.
+// If the string contains multiple objects, only the first object will be returned.
+// If the string is empty, nil will be returned.
 //
 // Example:
 //
@@ -31,25 +20,23 @@ import (
 //	}
 //
 //	fmt.Printf("Parsed Object: %+v\n", obj)
-func Parse(raw string) (*Object, *error) {
-	lines := strings.Split(raw, "\n")
-	i := 0
+func Parse(raw string) (*Object, error) {
+	objects, err := parseObjects(raw)
 
-	obj, err := parseObjectLines(&i, lines)
-	return obj, err
+	if err != nil {
+		return nil, err
+	}
+
+	if len(objects) == 0 {
+		return nil, nil
+	}
+
+	return &objects[0], nil
 }
 
 // Parses a string containing a multiple RPSL object
 // and returns a representation of the parsed data.
-//
-// Parameters:
-//
-//	raw - A string containing the RPSL objects to be parsed.
-//
-// Returns:
-//
-//	*[]Object - A pointer to a list of Object representation of the parsed RPSL data.
-//	*error  - A pointer to an error if the parsing fails, otherwise nil.
+// If the string does not contain any objects, nil will be returned.
 //
 // Example:
 //
@@ -75,28 +62,16 @@ func Parse(raw string) (*Object, *error) {
 //	for _, obj := range *objs {
 //		fmt.Printf("Parsed Object: %+v\n", obj)
 //	}
-func ParseMany(raw string) (*[]Object, *error) {
-	lines := strings.Split(raw, "\n")
-	objects := []Object{}
-	i := 0
+func ParseMany(raw string) ([]Object, error) {
+	objects, err := parseObjects(raw)
 
-	for {
-		if i >= len(lines) {
-			break
-		}
-
-		obj, err := parseObjectLines(&i, lines)
-		if err != nil {
-			return nil, err
-		}
-
-		if obj.Len() == 0 {
-			i++
-			continue
-		}
-
-		objects = append(objects, *obj)
+	if err != nil {
+		return nil, err
 	}
 
-	return &objects, nil
+	if len(objects) == 0 {
+		return nil, nil
+	}
+
+	return objects, nil
 }
