@@ -1,9 +1,7 @@
-package rpsl_test
+package rpsl
 
 import (
 	"testing"
-
-	"github.com/frederic-arr/rpsl-go"
 )
 
 func TestObject(t *testing.T) {
@@ -13,7 +11,7 @@ func TestObject(t *testing.T) {
 	}
 
 	i := 0
-	obj, err := rpsl.ParseObject(&i, lines)
+	obj, err := parseObjectLines(&i, lines)
 	if err != nil {
 		t.Fatalf(`parseObject => %v`, err)
 	}
@@ -55,7 +53,7 @@ func TestObjectComments(t *testing.T) {
 	}
 
 	i := 0
-	obj, err := rpsl.ParseObject(&i, lines)
+	obj, err := parseObjectLines(&i, lines)
 	if err != nil {
 		t.Fatalf(`parseObject => %v`, err)
 	}
@@ -98,7 +96,7 @@ func TestObjectLen(t *testing.T) {
 	}
 
 	i := 0
-	obj, err := rpsl.ParseObject(&i, lines)
+	obj, err := parseObjectLines(&i, lines)
 	if err != nil {
 		t.Fatalf(`parseObject => %v`, err)
 	}
@@ -118,7 +116,7 @@ func TestObjectKeys(t *testing.T) {
 	}
 
 	i := 0
-	obj, err := rpsl.ParseObject(&i, lines)
+	obj, err := parseObjectLines(&i, lines)
 	if err != nil {
 		t.Fatalf(`parseObject => %v`, err)
 	}
@@ -150,7 +148,7 @@ func TestObjectGet(t *testing.T) {
 	}
 
 	i := 0
-	obj, err := rpsl.ParseObject(&i, lines)
+	obj, err := parseObjectLines(&i, lines)
 	if err != nil {
 		t.Fatalf(`parseObject => %v`, err)
 	}

@@ -7,7 +7,7 @@ type Attribute struct {
 	Value []string
 }
 
-func ParseAttribute(i *int, lines []string) (*Attribute, *error) {
+func parseAttributeLines(i *int, lines []string) (*Attribute, *error) {
 	attribute := Attribute{}
 	line := lines[*i]
 	data := strings.SplitN(line, ":", 2)
@@ -53,4 +53,24 @@ func ParseAttribute(i *int, lines []string) (*Attribute, *error) {
 	}
 
 	return &attribute, nil
+}
+
+func (a *Attribute) String() string {
+	var str strings.Builder
+	str.WriteString(a.Name)
+	str.WriteString(":")
+	for i, value := range a.Value {
+		if i > 0 {
+			str.WriteString("+")
+		} else {
+			str.WriteString(" ")
+		}
+
+		str.WriteString(value)
+		if i < len(a.Value)-1 {
+			str.WriteString("\n")
+		}
+	}
+
+	return str.String()
 }

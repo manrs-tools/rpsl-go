@@ -1,16 +1,14 @@
-package rpsl_test
+package rpsl
 
 import (
 	"testing"
-
-	"github.com/frederic-arr/rpsl-go"
 )
 
 func TestSingleLineNoValue(t *testing.T) {
 	lines := []string{"dry-run:"}
 
 	i := 0
-	attr, err := rpsl.ParseAttribute(&i, lines)
+	attr, err := parseAttributeLines(&i, lines)
 	if err != nil {
 		t.Fatalf(`parseAttribute => %v`, err)
 	}
@@ -28,7 +26,7 @@ func TestSingleLine(t *testing.T) {
 	lines := []string{"description:       CERN"}
 
 	i := 0
-	attr, err := rpsl.ParseAttribute(&i, lines)
+	attr, err := parseAttributeLines(&i, lines)
 	if err != nil {
 		t.Fatalf(`parseAttribute => %v`, err)
 	}
@@ -50,7 +48,7 @@ func TestSingleLineComment(t *testing.T) {
 	lines := []string{"description:       CERN # This is a test"}
 
 	i := 0
-	attr, err := rpsl.ParseAttribute(&i, lines)
+	attr, err := parseAttributeLines(&i, lines)
 	if err != nil {
 		t.Fatalf(`parseAttribute => %v`, err)
 	}
@@ -75,7 +73,7 @@ func TestMultiLines(t *testing.T) {
 	}
 
 	i := 0
-	attr, err := rpsl.ParseAttribute(&i, lines)
+	attr, err := parseAttributeLines(&i, lines)
 	if err != nil {
 		t.Fatalf(`parseAttribute => %v`, err)
 	}
@@ -104,7 +102,7 @@ func TestMultiLinesComment(t *testing.T) {
 	}
 
 	i := 0
-	attr, err := rpsl.ParseAttribute(&i, lines)
+	attr, err := parseAttributeLines(&i, lines)
 	if err != nil {
 		t.Fatalf(`parseAttribute => %v`, err)
 	}
@@ -134,7 +132,7 @@ func TestBlankLines(t *testing.T) {
 	}
 
 	i := 0
-	attr, err := rpsl.ParseAttribute(&i, lines)
+	attr, err := parseAttributeLines(&i, lines)
 	if err != nil {
 		t.Fatalf(`parseAttribute => %v`, err)
 	}
@@ -168,7 +166,7 @@ func TestCommentLine(t *testing.T) {
 	}
 
 	i := 0
-	attr, err := rpsl.ParseAttribute(&i, lines)
+	attr, err := parseAttributeLines(&i, lines)
 	if err != nil {
 		t.Fatalf(`parseAttribute => %v`, err)
 	}
@@ -198,7 +196,7 @@ func TestBlankLineEnd(t *testing.T) {
 	}
 
 	i := 0
-	attr, err := rpsl.ParseAttribute(&i, lines)
+	attr, err := parseAttributeLines(&i, lines)
 	if err != nil {
 		t.Fatalf(`parseAttribute => %v`, err)
 	}

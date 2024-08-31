@@ -8,17 +8,15 @@ import (
 )
 
 func main() {
-	lines := []string{
-		"person:        John Doe",
-		"address:       1234 Elm Street",
-		"               Iceland",
-		"phone:         +1 555 123456",
-		"nic-hdl:       JD1234-RIPE",
-		"mnt-by:        EXAMPLE-MNT",
-		"source:        RIPE",
-	}
-	i := 0
-	obj, err := rpsl.ParseObject(&i, lines)
+	raw := "person:	John Doe\n" +
+		"address:	1234 Elm Street\n" +
+		"			Iceland\n" +
+		"phone:		+1 555 123456\n" +
+		"nic-hdl:	JD1234-RIPE\n" +
+		"mnt-by:	EXAMPLE-MNT\n" +
+		"source:	RIPE"
+
+	obj, err := rpsl.Parse(raw)
 	if err != nil {
 		log.Fatalf("parseObject => %v", err)
 	}
