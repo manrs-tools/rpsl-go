@@ -1,3 +1,6 @@
+// Copyright (c) The RPSL Go Authors.
+// SPDX-License-Identifier: Apache-2.0
+
 package rpsl
 
 // Parses a string containing a single RPSL object

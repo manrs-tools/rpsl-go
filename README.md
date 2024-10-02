@@ -65,4 +65,5 @@ See the output by running `go run examples/object.go` in this repository.
 
 
 ## License
-The source code of this project is licensed under the MIT License. For more information, see [LICENSE](./LICENSE).
+
+Copyright (c) The RPSL Go Authors. [Apache 2.0 License](./LICENSE).
