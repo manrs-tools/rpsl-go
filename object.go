@@ -11,11 +11,11 @@ type Object struct {
 // Returns a slice of unique keys present in the Object.
 // If a key appears multiple times in the Object, it will only be included once in the returned slice.
 func (o *Object) Keys() []string {
-	var keyList []string
-	keyPresent := make(map[string]bool)
+	keyPresent := make(map[string]struct{})
+	keyList := make([]string, 0)
 	for _, attr := range o.Attributes {
-		if _, ok := keyPresent[attr.Name]; !ok {
-			keyPresent[attr.Name] = true
+		if _, exists := keyPresent[attr.Name]; !exists {
+			keyPresent[attr.Name] = struct{}{}
 			keyList = append(keyList, attr.Name)
 		}
 	}
@@ -46,7 +46,7 @@ func (o *Object) GetFirst(key string) *Attribute {
 // If the key is not present in the Object, an empty slice will be returned.
 // If a key appears multiple times in the Object, all values will be included in the returned slice.
 func (o *Object) GetAll(key string) []Attribute {
-	var attributes []Attribute
+	attributes := make([]Attribute, 0)
 	for _, attr := range o.Attributes {
 		if attr.Name == key {
 			attributes = append(attributes, attr)
