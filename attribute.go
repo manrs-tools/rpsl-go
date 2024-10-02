@@ -1,40 +1,30 @@
 package rpsl
 
 import (
-	"errors"
-	"regexp"
+	"fmt"
 	"strings"
 )
 
 type Attribute struct {
-	Name    string
-	Value   string
-	Comment *string
+	Name  string
+	Value string
 }
 
-var attr_re = regexp.MustCompile(`^(?P<Name>[a-z0-9-]+): *(?P<Value>[^#]*?) *(?:# *(?P<Comment>.*?) *)?$`)
-
 func parseAttribute(line string) (*Attribute, error) {
-	matches := attr_re.FindStringSubmatch(line)
-	if matches == nil {
-		return nil, errors.New("invalid attribute: " + line)
+	parts := strings.SplitN(line, ":", 2)
+	if len(parts) != 2 {
+		return nil, fmt.Errorf("invalid attribute: %q", line)
 	}
 
-	var name string
-	var value string
-	var comment *string
+	name := strings.TrimSpace(parts[0])
+	name = strings.ToLower(name)
 
-	name = strings.TrimSpace(matches[attr_re.SubexpIndex("Name")])
-	value = strings.TrimSpace(matches[attr_re.SubexpIndex("Value")])
-	if strings.Contains(line, "#") {
-		c := strings.TrimSpace(matches[attr_re.SubexpIndex("Comment")])
-		comment = &c
-	}
+	value := strings.SplitN(parts[1], "#", 2)[0]
+	value = strings.TrimSpace(value)
 
 	attr := &Attribute{
-		Name:    name,
-		Value:   value,
-		Comment: comment,
+		Name:  name,
+		Value: value,
 	}
 
 	return attr, nil
@@ -45,10 +35,5 @@ func (a *Attribute) String() string {
 	str.WriteString(a.Name)
 	str.WriteString(":")
 	str.WriteString(a.Value)
-	if a.Comment != nil {
-		str.WriteString(" # ")
-		str.WriteString(*a.Comment)
-	}
-
 	return str.String()
 }

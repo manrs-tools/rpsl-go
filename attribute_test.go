@@ -34,10 +34,6 @@ func TestSingleLine(t *testing.T) {
 	if attr.Value != "CERN" {
 		t.Fatalf(`parseAttribute.Value => %v, want %v`, attr.Value, "CERN")
 	}
-
-	if attr.Comment != nil {
-		t.Fatalf(`parseAttribute.Comment => %v, want %v`, attr.Comment, nil)
-	}
 }
 
 func TestSingleLineComment(t *testing.T) {
@@ -53,13 +49,5 @@ func TestSingleLineComment(t *testing.T) {
 
 	if attr.Value != "CERN" {
 		t.Fatalf(`parseAttribute.Value => %v, want %v`, attr.Value, "CERN")
-	}
-
-	if attr.Comment == nil {
-		t.Fatalf(`parseAttribute.Comment => %v, want %v`, attr.Comment, "This is a test")
-	}
-
-	if *attr.Comment != "This is a test" {
-		t.Fatalf(`parseAttribute.Comment => %v, want %v`, attr.Comment, "This is a test")
 	}
 }
