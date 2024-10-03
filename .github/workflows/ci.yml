@@ -47,7 +47,16 @@ jobs:
       - name: Install dependencies
         run: go mod tidy
 
+      - name: Cache test data
+        uses: actions/cache@v3
+        with:
+          path: tests/data
+          key: ${{ runner.os }}-tests-data-${{ hashFiles('scripts/download-dumps.sh') }}
+          restore-keys: |
+            ${{ runner.os }}-tests-data-
+
       - name: Download test data
+        if: steps.cache.outputs.cache-hit != 'true'
         run: scripts/download-dumps.sh
 
       - name: Run tests
