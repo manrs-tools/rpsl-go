@@ -51,9 +51,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: tests/data
-          key: ${{ runner.os }}-tests-data-${{ hashFiles('scripts/download-dumps.sh') }}
-          restore-keys: |
-            ${{ runner.os }}-tests-data-
+          key: tests-data-${{ hashFiles('scripts/download-dumps.sh') }}
 
       - name: Download test data
         if: steps.cache.outputs.cache-hit != 'true'
