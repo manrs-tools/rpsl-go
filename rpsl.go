@@ -3,6 +3,8 @@
 
 package rpsl
 
+import "fmt"
+
 // Parses a string containing a single RPSL object
 // and returns a representation of the parsed data.
 // If the string contains multiple objects, only the first object will be returned.
@@ -32,6 +34,10 @@ func Parse(raw string) (*Object, error) {
 
 	if len(objects) == 0 {
 		return nil, nil
+	}
+
+	if len(objects) > 1 {
+		return nil, fmt.Errorf("multiple objects found in input")
 	}
 
 	return &objects[0], nil

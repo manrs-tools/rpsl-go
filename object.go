@@ -74,44 +74,44 @@ func (o *Object) Exists(key string) bool {
 // Returns a string representation of the Object.
 func (o *Object) String() string {
 	var str strings.Builder
+
+	var attributes []string
 	for _, attr := range o.Attributes {
-		str.WriteString(attr.String())
-		str.WriteString("\n")
+		attributes = append(attributes, attr.String())
 	}
 
+	str.WriteString(strings.Join(attributes, "\n"))
 	return str.String()
 }
 
-func parseObjects(raw string) ([]Object, error) {
+func parseObjects(buf string) ([]Object, error) {
 	objects := []Object{}
-	for _, part := range strings.Split(raw, "\n\n") {
-		part = strings.TrimSpace(part)
+
+	if buf == "" {
+		return objects, nil
+	}
+
+	lines := strings.Split(buf, "\n")
+	for i, line := range lines {
+		if strings.HasPrefix(line, "%") || strings.HasPrefix(line, "#") {
+			lines[i] = ""
+		}
+	}
+
+	buf = strings.Join(lines, "\n")
+	for _, part := range strings.Split(buf, "\n\n") {
+		part = strings.TrimPrefix(part, "\n")
+		part = strings.TrimSuffix(part, "\n")
 		if part == "" {
 			continue
 		}
 
-		lines := strings.Split(part, "\n")
-		object := Object{}
-		hasAttributes := false
-		for _, line := range lines {
-			line = strings.TrimSpace(line)
-			if line == "" || strings.HasPrefix(lines[0], "%") || strings.Contains(line, "\u0000") {
-				continue
-			}
-
-			attr, err := parseAttribute(line)
-			if err != nil {
-				return nil, err
-			}
-
-			hasAttributes = true
-			object.Attributes = append(object.Attributes, *attr)
+		attributes, err := parseAttributes(part)
+		if err != nil {
+			return nil, err
 		}
 
-		if !hasAttributes {
-			continue
-		}
-
+		object := Object{Attributes: attributes}
 		objects = append(objects, object)
 	}
 

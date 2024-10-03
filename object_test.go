@@ -128,3 +128,46 @@ func TestObjectGetAll(t *testing.T) {
 		t.Fatalf(`object.GetAll("remarks")[1].Value => %v, want %v`, attrs[1].Value, "This is another comment")
 	}
 }
+
+func TestMultipleObjects(t *testing.T) {
+	data := "" +
+		"poem:           POEM-LIR\n" +
+		"form:           FORM-HAIKU\n" +
+		"text:           hello ripe please\n" +
+		"text:           consider this offer, make lir\n" +
+		"text:           just for free\n" +
+		"descr:          Does RIPE still allow creation of these objects?\n" +
+		"created:        2024-04-30T18:06:01Z\n" +
+		"last-modified:  2024-04-30T18:06:01Z\n" +
+		"source:         RIPE\n" +
+		"mnt-by:         DUMMY-MNT\n" +
+		"\n" +
+		"poem:           poem-ipv6-adoption\n" +
+		"form:           FORM-HAIKU\n" +
+		"text:           Bound by old NAT's chains,\n" +
+		"text:           Joy of routing slips away,\n" +
+		"text:           IPv6 scorned.\n" +
+		"author:         DUMY-RIPE\n" +
+		"notify:         dummy@example.com\n" +
+		"mnt-by:         dummy-mnt\n" +
+		"created:        2024-06-01T23:28:08Z\n" +
+		"last-modified:  2024-06-01T23:28:08Z\n" +
+		"source:         RIPE\n"
+
+	objects, err := parseObjects(data)
+	if err != nil {
+		t.Fatalf("(error): %v", err)
+	}
+
+	if len(objects) != 2 {
+		t.Fatalf("(length): got %v, want %v", len(objects), 2)
+	}
+
+	if objects[0].Len() != 10 {
+		t.Fatalf("(0.length): got %v, want %v", objects[0].Len(), 10)
+	}
+
+	if objects[1].Len() != 11 {
+		t.Fatalf("(1.length): got %v, want %v", objects[1].Len(), 11)
+	}
+}
