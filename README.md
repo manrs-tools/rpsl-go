@@ -60,7 +60,6 @@ See the output by running `go run examples/object.go` in this repository.
 - No validation regarding the object is performed.
 - No validation regarding the attribute values is performed.
 
-
 ## Acknowledgements
 
 This library is inspired by the [RIPE Whois Database](https://github.com/RIPE-NCC/whois) and it's [RPSL Parser](https://github.com/RIPE-NCC/whois/tree/32d052f1a4613bbfb584248ab01dfb3a123f407b/whois-rpsl/src/main/java/net/ripe/db/whois/common/rpsl).
