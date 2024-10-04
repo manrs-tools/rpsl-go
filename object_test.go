@@ -102,8 +102,8 @@ func TestObjectGetAll(t *testing.T) {
 		t.Fatalf(`object.GetAll("organisation") => length of %v, want %v`, len(attrs), 1)
 	}
 
-	if attrs[0].Value != "ORG-CEOf1-RIPE" {
-		t.Fatalf(`object.GetAll("organisation").Value => %v, want %v`, attrs[0].Value, "ORG-CEOf1-RIPE")
+	if attrs[0] != "ORG-CEOf1-RIPE" {
+		t.Fatalf(`object.GetAll("organisation") => %v, want %v`, attrs[0], "ORG-CEOf1-RIPE")
 	}
 
 	attrs = obj.GetAll("description")
@@ -111,8 +111,8 @@ func TestObjectGetAll(t *testing.T) {
 		t.Fatalf(`object.GetAll("description") => length of %v, want %v`, len(attrs), 1)
 	}
 
-	if attrs[0].Value != "CERN" {
-		t.Fatalf(`object.GetAll("description").Value => %v, want %v`, attrs[0].Value, "CERN")
+	if attrs[0] != "CERN" {
+		t.Fatalf(`object.GetAll("description") => %v, want %v`, attrs[0], "CERN")
 	}
 
 	attrs = obj.GetAll("remarks")
@@ -120,12 +120,12 @@ func TestObjectGetAll(t *testing.T) {
 		t.Fatalf(`object.GetAll("remarks") => length of %v, want %v`, len(attrs), 2)
 	}
 
-	if attrs[0].Value != "This is a comment" {
-		t.Fatalf(`object.GetAll("remarks")[0].Value => %v, want %v`, attrs[0].Value, "This is a comment")
+	if attrs[0] != "This is a comment" {
+		t.Fatalf(`object.GetAll("remarks")[0] => %v, want %v`, attrs[0], "This is a comment")
 	}
 
-	if attrs[1].Value != "This is another comment" {
-		t.Fatalf(`object.GetAll("remarks")[1].Value => %v, want %v`, attrs[1].Value, "This is another comment")
+	if attrs[1] != "This is another comment" {
+		t.Fatalf(`object.GetAll("remarks")[1] => %v, want %v`, attrs[1], "This is another comment")
 	}
 }
 

@@ -26,11 +26,11 @@ func main() {
 
 	address := obj.GetFirst("address")
 	fmt.Printf("--- Address ---\n")
-	fmt.Printf("%s\n\n", address.Value)
+	fmt.Printf("%s\n\n", address)
 
 	maintainers := obj.GetAll("mnt-by")
 	fmt.Printf("--- Maintainers ---\n")
-	for _, m := range maintainers {
-		fmt.Printf("%s\n", m.Value)
+	for _, mntner := range maintainers {
+		fmt.Printf("%s\n", mntner)
 	}
 }

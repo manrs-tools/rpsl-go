@@ -34,11 +34,11 @@ func (o *Object) Len() int {
 // Returns the first value for a given key in the Object.
 // If the key is not present in the Object, an empty string will be returned.
 // If a key appears multiple times in the Object, only the first value will be returned.
-func (o *Object) GetFirst(key string) *Attribute {
+func (o *Object) GetFirst(key string) *string {
 	key = strings.ToLower(key)
 	for _, attr := range o.Attributes {
 		if attr.Name == key {
-			return &attr
+			return &attr.Value
 		}
 	}
 
@@ -48,11 +48,11 @@ func (o *Object) GetFirst(key string) *Attribute {
 // Returns a slice of values for a given key in the Object.
 // If the key is not present in the Object, an empty slice will be returned.
 // If a key appears multiple times in the Object, all values will be included in the returned slice.
-func (o *Object) GetAll(key string) []Attribute {
-	attributes := make([]Attribute, 0)
+func (o *Object) GetAll(key string) []string {
+	attributes := make([]string, 0)
 	for _, attr := range o.Attributes {
 		if attr.Name == key {
-			attributes = append(attributes, attr)
+			attributes = append(attributes, attr.Value)
 		}
 	}
 
