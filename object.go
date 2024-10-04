@@ -91,8 +91,9 @@ func (o *Object) EnsureClass(class string) error {
 		return fmt.Errorf("object has no attributes")
 	}
 
-	if o.Attributes[0].Name != class {
-		return fmt.Errorf("object class is not %s", class)
+	first := o.Attributes[0].Name
+	if first != class {
+		return fmt.Errorf("attribute '%s' should be the first, but found '%s' instead", class, first)
 	}
 
 	return nil
@@ -101,7 +102,7 @@ func (o *Object) EnsureClass(class string) error {
 // Ensures that the Object has at least one attribute with a given key.
 func (o *Object) EnsureAtLeastOne(key string) error {
 	if !o.Exists(key) {
-		return fmt.Errorf("object has no %s attribute", key)
+		return fmt.Errorf("attribute '%s' is (mandatory, multiple) but found none", key)
 	}
 
 	return nil
@@ -110,7 +111,7 @@ func (o *Object) EnsureAtLeastOne(key string) error {
 // Ensures that the Object has at most one attribute with a given key.
 func (o *Object) EnsureAtMostOne(key string) error {
 	if len(o.GetAll(key)) > 1 {
-		return fmt.Errorf("object has more than one %s attribute", key)
+		return fmt.Errorf("attribute '%s' is (optional, single) but found multiple", key)
 	}
 
 	return nil
@@ -119,11 +120,11 @@ func (o *Object) EnsureAtMostOne(key string) error {
 // Ensures that the Object has exactly one attribute with a given key.
 func (o *Object) EnsureOne(key string) error {
 	if err := o.EnsureAtLeastOne(key); err != nil {
-		return err
+		return fmt.Errorf("attribute '%s' is (mandatory, single) but found none", key)
 	}
 
 	if err := o.EnsureAtMostOne(key); err != nil {
-		return err
+		return fmt.Errorf("attribute '%s' is (mandatory, single) but found multiple", key)
 	}
 
 	return nil
