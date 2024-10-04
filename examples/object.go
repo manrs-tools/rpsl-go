@@ -26,7 +26,7 @@ func main() {
 
 	address := obj.GetFirst("address")
 	fmt.Printf("--- Address ---\n")
-	fmt.Printf("%s\n\n", address)
+	fmt.Printf("%s\n\n", *address)
 
 	maintainers := obj.GetAll("mnt-by")
 	fmt.Printf("--- Maintainers ---\n")

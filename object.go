@@ -4,6 +4,7 @@
 package rpsl
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -82,6 +83,50 @@ func (o *Object) String() string {
 
 	str.WriteString(strings.Join(attributes, "\n"))
 	return str.String()
+}
+
+// Ensures that the first attribute in the Object is of a given class.
+func (o *Object) EnsureClass(class string) error {
+	if len(o.Attributes) == 0 {
+		return fmt.Errorf("object has no attributes")
+	}
+
+	if o.Attributes[0].Name != class {
+		return fmt.Errorf("object class is not %s", class)
+	}
+
+	return nil
+}
+
+// Ensures that the Object has at least one attribute with a given key.
+func (o *Object) EnsureAtLeastOne(key string) error {
+	if !o.Exists(key) {
+		return fmt.Errorf("object has no %s attribute", key)
+	}
+
+	return nil
+}
+
+// Ensures that the Object has at most one attribute with a given key.
+func (o *Object) EnsureAtMostOne(key string) error {
+	if len(o.GetAll(key)) > 1 {
+		return fmt.Errorf("object has more than one %s attribute", key)
+	}
+
+	return nil
+}
+
+// Ensures that the Object has exactly one attribute with a given key.
+func (o *Object) EnsureOne(key string) error {
+	if err := o.EnsureAtLeastOne(key); err != nil {
+		return err
+	}
+
+	if err := o.EnsureAtMostOne(key); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func parseObjects(buf string) ([]Object, error) {
