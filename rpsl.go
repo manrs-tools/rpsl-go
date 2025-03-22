@@ -3,9 +3,13 @@
 
 package rpsl
 
-import "fmt"
+import (
+	"errors"
+	"io"
+	"strings"
+)
 
-// Parses a string containing a single RPSL object
+// Parse parses a string containing a single RPSL object
 // and returns a representation of the parsed data.
 // If the string contains multiple objects, an error will be returned.
 // If the string is empty, an error will be returned.
@@ -26,24 +30,45 @@ import "fmt"
 //
 //	fmt.Printf("Parsed Object: %+v\n", obj)
 func Parse(raw string) (*Object, error) {
-	objects, err := parseObjects(raw)
+	return ParseFromReader(strings.NewReader(raw))
+}
 
+// ParseFromReader parses an RPSL object from an io.Reader and returns a representation of the parsed data.
+// If the reader contains multiple objects, an error will be returned.
+// If the reader is empty, an error will be returned.
+//
+// Example:
+//
+//	file, err := os.Open("rpsl_object.txt")
+//	if err != nil {
+//	    log.Fatalf("Failed to open file: %v", err)
+//	}
+//	defer file.Close()
+//
+//	obj, err := ParseFromReader(file)
+//	if err != nil {
+//	    log.Fatalf("Failed to parse RPSL object: %v", err)
+//	}
+//
+//	fmt.Printf("Parsed Object: %+v\n", obj)
+func ParseFromReader(r io.Reader) (*Object, error) {
+	objects, err := parseObjects(r)
 	if err != nil {
 		return nil, err
 	}
 
 	if len(objects) == 0 {
-		return nil, fmt.Errorf("no objects found in input")
+		return nil, errors.New("no objects found in input")
 	}
 
 	if len(objects) > 1 {
-		return nil, fmt.Errorf("multiple objects found in input")
+		return nil, errors.New("multiple objects found in input")
 	}
 
 	return &objects[0], nil
 }
 
-// Parses a string containing a multiple RPSL object
+// ParseMany parses a string containing multiple RPSL objects
 // and returns a representation of the parsed data.
 // If the string does not contain any objects, nil will be returned.
 //
@@ -62,18 +87,40 @@ func Parse(raw string) (*Object, error) {
 //		"nic-hdl:	JS5678-RIPE\n"+
 //		"mnt-by:	EXAMPLE-MNT\n"+
 //		"source:	RIPE"
-//	obj, err := ParseMany(raw)
+//	objs, err := ParseMany(raw)
 //
 //	if err != nil {
-//		log.Fatalf("Failed to parse RPSL object: %v", err)
+//		log.Fatalf("Failed to parse RPSL objects: %v", err)
 //	}
 //
-//	for _, obj := range *objs {
+//	for _, obj := range objs {
 //		fmt.Printf("Parsed Object: %+v\n", obj)
 //	}
 func ParseMany(raw string) ([]Object, error) {
-	objects, err := parseObjects(raw)
+	return ParseManyFromReader(strings.NewReader(raw))
+}
 
+// ParseManyFromReader parses multiple RPSL objects from an io.Reader and returns a representation of the parsed data.
+// If the reader does not contain any objects, nil will be returned.
+//
+// Example:
+//
+//	file, err := os.Open("rpsl_objects.txt")
+//	if err != nil {
+//	    log.Fatalf("Failed to open file: %v", err)
+//	}
+//	defer file.Close()
+//
+//	objs, err := ParseManyFromReader(file)
+//	if err != nil {
+//	    log.Fatalf("Failed to parse RPSL objects: %v", err)
+//	}
+//
+//	for _, obj := range objs {
+//	    fmt.Printf("Parsed Object: %+v\n", obj)
+//	}
+func ParseManyFromReader(r io.Reader) ([]Object, error) {
+	objects, err := parseObjects(r)
 	if err != nil {
 		return nil, err
 	}
